@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>전부 중첩 사용</title>
+  <script src="commonUtils.js"></script>
+</head>
+<body>
+  ### L.range, L.map, L.filter, take, reduce 중첩 사용
+  <script>
+    // const L = {};
+    // go(
+    //     range(10),
+    //     map(n => n + 10),
+    //     filter(n => n % 2),
+    //     take(2),
+    //     log
+    // );
+
+    // go(
+    //     L.range(10),
+    //     L.map(n => n + 10),
+    //     L.filter(n => n % 2),
+    //     take(2),
+    //     log
+    // );
+
+    /**
+     * 위 방식이
+     * (가로 방향 진행) →→→
+     * [0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ... ]
+     * [10, 11, 12, 13, 14, ... ]
+     * [11, 13, 15 ... ]
+     * [11, 13]
+     *
+     * 이렇게 모든 범위의 숫자에서 가로 차례대로 걸렀다고 하면,
+     * 아래 방식은
+     *                       (세로 방향 진행)
+     * 0      1     2      3      ↓ ↑
+     * 10     11    12     13     ↓ ↑
+     * false  true  false  true   ↓ ↑
+     *
+     * 이런 식으로 진행된다.
+     */
+  </script>
+  <script>
+    L.entries = function *(obj) {
+      for (const k in obj) yield [k, obj[k]];
+    };
+
+    // 배열 뿐만 아니라 범용적으로 사용 가능
+    const join = curry((sep = ',', iter) =>
+        reduce((a, b) => `${a}${sep}${b}`, iter));
+
+    const queryStr = pipe(
+        L.entries,
+        L.map(([k, v]) => `${k}=${v}`),
+        join('&')
+    );
+
+    log(queryStr({ limit: 10, offset: 10, type: 'notice'}));
+
+    function *a() {
+      yield 10;
+      yield 11;
+      yield 12;
+      yield 13;
+    }
+
+    log(join(' - ', a()));
+  </script>
+  <script>
+    const users = [
+      { age: 32 },
+      { age: 31 },
+      { age: 37 },
+      { age: 28 },
+      { age: 25 },
+      { age: 32 },
+      { age: 31 },
+      { age: 37 }
+    ]
+
+    const find = curry((f, iter) => go(
+        iter,
+        L.filter(a => (log(a), f(a))),
+        a => (log(a), a),
+        take(1),
+        ([a]) => a));
+
+    log(find(u => u.age < 30)(users));
+
+    go(
+        users,
+        L.map(u => u.age),
+        find(n => n < 30),
+        log
+    )
+  </script>
+
+  ## L.map + take로 map 만들기
+  <script>
+    const map = curry((f, iter) => go(
+        iter,
+        L.map(f),
+        take(Infinity)
+    ));
+
+    log(map(a => a + 10, L.range(4)));
+  </script>
+</body>
+</html>
