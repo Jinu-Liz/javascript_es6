@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>promise</title>
+</head>
+<body>
+  ## 일급
+  <script>
+    function add10(a, cb) {
+      setTimeout(() => cb(a + 10), 100)
+    }
+
+    var a = add10(5, res => {
+      add10(res, res => {
+        add10(res, res => {
+          add10(res, res => {
+            add10(res, res => {
+              console.log(res);
+            })
+          })
+        })
+      })
+    })
+
+    console.log(a);
+    // Promise는 대기, 성공, 실패로 이루어진 클래스. 일급값으로 이루어져 있다는 것이 중요.
+    // 대기되어지는 값을 만든다라는 점에서 콜백과 다름. 굉장히 중요.
+    function add20(a) {   // 비동기 상황에 대한 값을 만들어서 return을 하고 있다는 점이 아주 중요.
+      return new Promise(resolve => setTimeout(() => resolve(a + 20), 100));
+    }
+
+    var b = add20(5)
+        .then(add20)
+        .then(add20)
+        .then(add20)
+        .then(console.log());
+
+    console.log(b);
+  </script>
+</body>
+</html>

@@ -100,13 +100,14 @@
 
   ## L.map + take로 map 만들기
   <script>
-    const map = curry((f, iter) => go(
-        iter,
-        L.map(f),
-        take(Infinity)
-    ));
+    const takeAll = take(Infinity);
+    const maps = curry(pipe(L.map, takeAll));
 
-    log(map(a => a + 10, L.range(4)));
+    log(maps(a => a + 10, L.range(4)));
+
+    const filters = curry(pipe(L.filter, takeAll));
+
+    log(filters(a => a % 2, range(4)));
   </script>
 </body>
 </html>
