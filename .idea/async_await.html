@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>async/await</title>
+</head>
+<body>
+  ## async/await
+  ## 비동기 상황을 보다 동기적으로 제어할 수 있음
+  <script>
+    function delay(a) {
+      return new Promise(resolve => setTimeout(() => resolve(a), 500));
+    }
+
+    async function delayIdentity(a) {
+      await delay(1000);
+
+      return a;
+    }
+
+    // async 함수는 어찌됐든 Promise를 리턴. async함수 내에서는 원하는 값을 받을 수 있지만,
+    // 해당 함수를 다른 곳에서 값으로 사용하려면 Promise객체를 사용하게 된다.
+    async function f1() {
+      const a = await delayIdentity(10);
+      const b = await delayIdentity(5);
+
+
+      return a + b;
+    }
+
+    const pa = f1();
+    // console.log(f1());
+
+    // 바로 사용하려면 무명함수를 사용하여 풀어주어 사용할 수 있다.
+    (async () => {
+      console.log(await f1());
+    }) ();
+  </script>
+</body>
+</html>

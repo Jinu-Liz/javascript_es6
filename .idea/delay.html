@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>delay</title>
+  <script src="commonUtils.js"></script>
+</head>
+<body>
+  ## 지연된 함수열을 병렬적으로 평가하기 - C.reduce, C.take
+  <script>
+    const C = {};
+    function noop() {};
+    const catchNoop = arr => (arr.forEach(a => a instanceof Promise ? a.catch(noop) : a), arr);
+
+    // C.reduce = curry(
+    //     (f, acc, iter) =>{
+    //       const iter2 = catchNoop(iter ? [...iter] : [...acc]);
+    //
+    //       return iter ? reduce(f, acc, iter2) : reduce(f, iter2);
+    //     }
+    // );
+
+    C.reduce = curry(
+        (f, acc, iter) => iter ? reduce(f, acc, catchNoop([...iter])) : reduce(f, catchNoop([...acc]))
+    );
+
+    C.take = curry((l, iter) => take(l, catchNoop([...iter])));
+
+    C.takeAll = C.take(Infinity);
+
+    C.map = curry(pipe(L.map, C.takeAll));
+
+    C.filter = curry(pipe(L.filter, C.takeAll));
+
+    const delay1000 = a => new Promise(resolve => {
+      log('hi~');
+      setTimeout(() => resolve(a), 1000)
+    });
+
+    // console.time('');
+    // go(
+    //     [1, 2, 3, 4, 5],
+    //     L.map(a => delay1000(a * a)),
+    //     L.filter(a => delay1000(a % 2)),
+    //     L.map(a => delay1000(a * a)),
+    //     // C.reduce(add),
+    //     C.take(3),
+    //     log,
+    //     _ => console.timeEnd('')
+    // );
+  </script>
+
+  ## 즉시 병렬적으로 평가하기 - C.map, C.filter
+  <script>
+    // C.map(a => delay1000(a * a), [1, 2, 3, 4]).then(log);
+    C.filter(a => delay1000(a % 2), [1, 2, 3, 4]).then(log);
+  </script>
+
+
+  ## 즉시, 지연, Promise, 병렬적 조합하기
+  <script>
+    const delay500 = (a, name) => new Promise(resolve => {
+      console.log(`${name}: ${a}`);
+      setTimeout(() => resolve(a), 500);
+    });
+
+    console.time('');
+    go(
+        [1, 2, 3, 4, 5],
+        L.map(a => delay500(a * a, 'map 1')),
+        C.filter(a => delay500(a % 2, 'filter 2')),
+        L.map(a => delay500(a + 1, 'map 3')),
+        // C.reduce(add),
+        take(2),
+        log,
+        _ => console.timeEnd(''));
+  </script>
+</body>
+</html>

@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>promise</title>
+  <script src="commonUtils.js"></script>
 </head>
 <body>
   ## 일급
@@ -16,14 +17,14 @@
         add10(res, res => {
           add10(res, res => {
             add10(res, res => {
-              console.log(res);
+              // console.log(res);
             })
           })
         })
       })
     })
 
-    console.log(a);
+    // console.log(a);
     // Promise는 대기, 성공, 실패로 이루어진 클래스. 일급값으로 이루어져 있다는 것이 중요.
     // 대기되어지는 값을 만든다라는 점에서 콜백과 다름. 굉장히 중요.
     function add20(a) {   // 비동기 상황에 대한 값을 만들어서 return을 하고 있다는 점이 아주 중요.
@@ -34,9 +35,74 @@
         .then(add20)
         .then(add20)
         .then(add20)
-        .then(console.log());
+        // .then(console.log());
 
-    console.log(b);
+    // console.log(b);
+  </script>
+
+  ## 일급 활용
+  <script>
+    const delay100 = a => new Promise(resolve => setTimeout(() => resolve(a), 100))
+
+    const go1 = (a, f) => a instanceof Promise ? a.then(f) : f(a);
+    const add5 = a => a + 5;
+
+    var r = go1(10, add5);
+    // console.log(r);
+
+    var r2 = go1(delay100(10), add5);
+    // r2.then(console.log)
+  </script>
+
+  ## Composition
+  <script type="module">
+    // f, g
+    // f(g(x))
+    // 안전한 합성을 위해 모나드라는 개념이 등장
+    const g = a => a + 1;
+    const f = a => a * a;
+
+    // console.log(f(g(1)));
+    // console.log(f(g()));
+
+    // Array.of(1).map(g).map(f).forEach(r => console.log(r));
+    // [].map(g).map(f).forEach(r => console.log(r))
+
+    // Promise.resolve(2).then(g).then(f).then(r => console.log(r));
+    // Promise.resolve().then(g).then(f).then(r => console.log(r));
+  </script>
+
+  ## Kleisli Composition
+  <script>
+    // f, g
+    // f(g(x)) = f(g(x))
+    // f(g(x)) = g(x)
+    // 오류가 있을 수 있는 상황에서 안전하게 합성할 수 있는 개념
+
+    var users = [
+      { id: 1, name: 'aa'},
+      { id: 2, name: 'bb'},
+      { id: 3, name: 'cc'}
+    ];
+
+    const getUserById = id =>
+        find(u => u.id == id, users) || Promise.reject('없어요!');
+
+    const f = ({name}) => name;
+    const g = getUserById;
+    // const fg = id => f(g(id));
+
+    const fg = id => Promise.resolve(id).then(g).then(f).catch(a => a);
+
+    fg(2).then(log);
+    // const r = fg(2);
+    // log(r);
+    //
+    // users.pop();
+    // users.pop();
+    //
+    // const r2 = fg(2);
+    // log(r);
   </script>
 </body>
 </html>
