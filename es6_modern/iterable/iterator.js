@@ -39,3 +39,15 @@ for (const a of map.entries()) console.log(a);
  * - 이터레이터 : { value, done } 객체를 리턴하는 next() 를 가진 값
  * - 이터러블 / 이터레이터 프로토콜 : 이터러블을 for...of, 전개 연산자 등과 함께 동작하도록한 규약
  */
+
+
+const a = [1, 2];
+console.log(([...a, ...[3, 4]])); // array 2개를 하나로 합침
+console.log([...a, ...arr, ...set, ...map]);
+
+/**
+ * iterator를 null로 만들면 에러 발생.
+ * 전개연산자도 iterator를 사용.
+ */
+a[Symbol.iterator] = null;
+console.log(([...a, ...[3, 4]]));
