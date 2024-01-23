@@ -85,3 +85,19 @@ console.log(infiLimitOddIter.next());
  * 순회하면서 처리가 가능함.
   */
 for (const a of infinityLimitOdds(20)) console.log(a);
+
+
+/**
+ * for-of, 전개 연산자, 구조 분해, 나머지 연산자
+ */
+console.log(...infinityLimitOdds(20));
+console.log(...infinityLimitOdds(20), ...infinityLimitOdds(10));
+
+const [head, ...tail] = infinityLimitOdds(5);
+console.log(head);
+console.log(tail);
+
+const [a, b, ...rest] = infinityLimitOdds(10);
+console.log(a);
+console.log(b);
+console.log(rest);
