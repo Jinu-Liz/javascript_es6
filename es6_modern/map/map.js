@@ -34,3 +34,13 @@ const map = (f, iter) => {
 
 console.log(map(p => p.name, products));
 console.log(map(p => p.price, products));
+
+
+let m = new Map();
+m.set('a', 10);
+m.set('b', 20);
+const it = m[Symbol.iterator]();
+console.log(it);
+
+// 이런식으로 내부의 값이 바뀐 새로운 Map을 만들 수도 있음.
+console.log(new Map(map(([k, v]) => [k, v * 2], m)));

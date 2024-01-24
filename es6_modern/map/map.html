@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<script>
+  const map = (f, iter) => {
+    let res = [];
+    for (const a of iter) {
+      res.push(f(a));
+    }
+
+    return res;
+  }
+
+  /**
+   * 이터러블 프로토콜을 따른 map의 다형성
+   */
+  console.log([1, 2, 3].map(a => a + 1));   // 동작하지만
+  console.log(document.querySelectorAll('*').map);    // 동작하지 않는다. (undefined)
+
+  /**
+   * NodeList는 Array를 상속받지 않기 때문에 map을 쓸 수가 없다.
+   * prototype을 확인해보면 map함수가 없다.
+   * 제너레이터 함수가 이터레이터 프로토콜을 따르고 있기 때문에 map과 함께 사용이 가능하다.
+   */
+
+  function *gen() {
+    yield 2;
+    if (false) yield 3;
+    yield 4;
+  }
+
+  console.log(map(a => a * a, gen()));
+</script>
+</body>
+</html>
