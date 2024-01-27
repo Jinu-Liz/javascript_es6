@@ -35,10 +35,20 @@ const reduce = (f, acc, iter) => {
 // 코드를 값으로 다루어 표현력 높이기
 const go = (...args) => reduce((a, f) => f(a), args);
 
+const pipe = (f, ...fs) => (...args) => go(f(...args), ...fs);
+
 go (
-    0,
+    add(0, 1),
     a => a + 1,
     a => a + 10,
     a => a + 100,
     a => console.log(a)
 );
+
+const func = pipe(
+    (a, b) => a + b,
+    a => a + 10,
+    a => a + 100
+);
+
+console.log(func(0, 1));
