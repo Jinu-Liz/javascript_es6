@@ -131,3 +131,48 @@ go(
     reduce(add),
     a => console.log(a)
 )
+
+
+/**
+ * 함수를 조합하여 중복 제거
+ */
+const totalPrice = pipe(
+    map(p => p.price),
+    reduce(add)
+);
+
+go(
+    products,
+    filter(p => p.price < 20000),
+    totalPrice,
+    a => console.log(a)
+);
+
+go(
+    products,
+    filter(p => p.price >= 20000),
+    totalPrice,
+    a => console.log(a)
+);
+
+
+/**
+ * filter 조건을 받아 totalPrice까지 실행하는 함수
+ * 이렇듯 함수를 조합하여 함수를 만들어 쓸 수 있다.
+ */
+const baseTotalPrice = condition => pipe(
+    filter(condition),
+    totalPrice
+);
+
+go(
+    products,
+    baseTotalPrice(p => p.price < 20000),
+    a => console.log(a)
+);
+
+go(
+    products,
+    baseTotalPrice(p => p.price >= 20000),
+    a => console.log(a)
+);
