@@ -71,6 +71,28 @@
   );
 
   console.log(total_price(products));
+
+
+  // 추상화
+  const sum = curry((f, iter) => go(
+      iter,
+      map(f),
+      reduce(add)
+  ));
+
+  console.log(sum(p => p.price * p.quantity, products));
+
+  const total_quantity2 = sum(p => p.quantity);
+  console.log(total_quantity2(products));
+
+  const total_price2 = sum(p => p.price * p.quantity);
+  console.log(total_price2(products));
+
+  console.log(sum(u => u.age, [
+    { age : 30 },
+    { age : 20 },
+    { age : 10 },
+  ]));
 </script>
 </body>
 </html>
