@@ -46,7 +46,6 @@ const range = l => {
   let i = -1;
   let res = [];
   while (++i < l) {
-    console.log(i, 'range');
     res.push(i);
   }
 
@@ -71,7 +70,6 @@ L.range = function *(l) {
   console.log('hi~!');
   let i = -1;
   while (++i < l) {
-    console.log(i, 'L.range');
     yield i;
   }
 }
@@ -96,3 +94,12 @@ console.log(list.next());
  * 실제로 필요한 곳에서 평가가 이루어져 값을 꺼내도록 된다.
  * ex) reduce(add, L.range(4)) <- reduce에서 평가가 이루어지기 전 대기.
  */
+
+function test(name, time, f) {
+  console.time(name);
+  while (time--) f();
+  console.timeEnd(name);
+}
+
+test('range', 10, () => reduce(add, range(100000)));
+test('L.range', 10, () => reduce(add, L.range(100000)));
