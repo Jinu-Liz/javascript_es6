@@ -80,3 +80,18 @@ go(
     log
 )
 console.timeEnd('');
+
+L.map = function *(f, iter) {
+  for (const a of iter) yield f(a);
+};
+
+var it = L.map(a => a + 10, [1, 2, 3]);
+console.log(it.next());
+console.log(it.next());
+console.log(it.next());
+
+L.filter = function *(f, iter) { {
+  for (const a of iter) if (f(a)) yield a;
+}
+
+}
